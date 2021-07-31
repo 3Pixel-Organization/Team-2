@@ -7,9 +7,9 @@ public class AttackedScrollingText : MonoBehaviour, IAttackable
     public ScrollingText Text;
     public Color textColor;
 
-    public void OnAttack(GameObject attacker, Attack attack)
+    public void OnAttack(GameObject attacker, int damage)
     {
-        var text = attack.Damage.ToString() + " DMG";
+        var text = damage.ToString() + " DMG";
         var scrollingText = Instantiate(Text, transform.position, Quaternion.identity);
         scrollingText.SetText(text);
         scrollingText.SetColor(textColor);

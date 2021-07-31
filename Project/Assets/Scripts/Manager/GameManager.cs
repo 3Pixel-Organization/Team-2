@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { private set; get; }
 
-    public CharacterStats_SO playerStats;
     public GameObject loadingPanel;
     public Slider loadingBar; 
 
@@ -39,16 +38,11 @@ public class GameManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        if (playerStats == null)
-        {
-            Debug.Log("[Game Manager] There is no player stats attached!");
-        }
-
-        playerStats.LoadStats();
-
         OnPlayerDeathEvent += OnPlayerDeath;
         OnLevelLostEvent += OnLevelLostManager;
         OnLevelWonEvent += OnLevelWonManager;
+
+        SaveManager.Instance.playerData.SyncPlayerData();
     }
 
     private void Update()

@@ -3,7 +3,12 @@ using System.Collections.Generic;
 
 public class EquipmentManager : MonoBehaviour
 {
+    //this script is in ItemManager object inside GameManager
+    //this script handle all equipement data for the player
+
     public static EquipmentManager Instance;
+
+    public Item_SO defaultWeapon;
 
     public List<string> equipmentItems{
         get{return SaveManager.Instance.playerData.equipmentItems;}
@@ -35,10 +40,14 @@ public class EquipmentManager : MonoBehaviour
                 equipmentItems.RemoveAt(i);
             }
         }
+        if(equipmentItems.Count <= 0)
+        {
+            EquipItem(defaultWeapon);
+        }
     }
 
     /// <summary>
-    /// get all equipped items
+    /// get all equipped items based on id in saved data
     /// </summary>
     public List<Item_SO> EquippedItems(){
         List<Item_SO> temps = new List<Item_SO>();
@@ -69,7 +78,6 @@ public class EquipmentManager : MonoBehaviour
     public void EquipItem(Item_SO item)
     {
         equipmentItems.Add(item.id);
-        IncreaseStat(item.itemType, item.itemAmount);
     }
 
     /// <summary>
@@ -78,31 +86,18 @@ public class EquipmentManager : MonoBehaviour
     public void Unequip(Item_SO item)
     {
         equipmentItems.Remove(item.id);
-        DecreaseStat(item.itemType, item.itemAmount);
     }
 
-    public void IncreaseStat(ItemType itemType, int amount)
+    /// <summary>
+    /// get requipment stat total
+    /// </summary>
+    public float GetEquipmentStat(TypeOfAttributes typeOfAttributes)
     {
-        if (itemType == ItemType.ARMOR)
+        float sum = 0;
+        foreach (var item in equipmentItems)
         {
-            GameManager.Instance.playerStats.IncreaseArmour(amount);
-
+            sum += InventoryManager.Instance.items[item].GetItemAttribute(typeOfAttributes);
         }
-        else if (itemType == ItemType.WEAPON)
-        {
-            GameManager.Instance.playerStats.IncreaseDamage(amount);
-        }
-    }
-
-    public void DecreaseStat(ItemType itemType, int amount)
-    {
-        if (itemType == ItemType.ARMOR)
-        {
-            GameManager.Instance.playerStats.DecreaseArmour(amount);
-        }
-        else if (itemType == ItemType.WEAPON)
-        {
-            GameManager.Instance.playerStats.DecreaseDamage(amount);
-        }
+        return sum;
     }
 }

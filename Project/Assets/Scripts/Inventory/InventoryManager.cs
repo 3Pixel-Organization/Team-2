@@ -4,6 +4,9 @@ using System.Linq;
 
 public class InventoryManager : MonoBehaviour
 {
+    //this script is in ItemManager object inside GameManager
+    //this script handle all inventory data for the player
+
     public static InventoryManager Instance;
 
     public Dictionary<string, Item_SO> items = new Dictionary<string, Item_SO>();
@@ -57,7 +60,7 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// get all owned items 
+    /// get all owned items based on id from saved data
     /// </summary>
     public List<Item_SO> OwnedItems(){
         List<Item_SO> temps = new List<Item_SO>();
@@ -75,7 +78,7 @@ public class InventoryManager : MonoBehaviour
         List<Item_SO> temps = new List<Item_SO>();
         foreach (var item in items)
         {
-            if(item.Value.itemType == ItemType.ARMOR || item.Value.itemType == ItemType.WEAPON){
+            if(item.Value.showInStore){
                 temps.Add(item.Value);
             }
         }
@@ -129,28 +132,7 @@ public class InventoryManager : MonoBehaviour
     /// <summary>
     /// Add an item to the temporary inventory
     /// </summary>
-    public void AddItemToTemp(Item_SO _item, out bool picked){
-        switch (_item.itemType)
-        {
-            case ItemType.HEALTH:
-                _item.UseItem();
-                picked = true;
-            break;
-            case ItemType.ARMOR:
-                tempItems.Add(_item.id);
-                picked = true;
-            break;
-            case ItemType.WEAPON:
-                tempItems.Add(_item.id);
-                picked = true;
-            break;
-            case ItemType.AMMO:
-                _item.UseItem();
-                picked = true;
-            break;
-            default:
-                picked = false;
-            break;
-        }
+    public void AddItemToTemp(Item_SO _item){
+        tempItems.Add(_item.id);
     }
 }

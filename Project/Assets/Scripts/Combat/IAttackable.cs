@@ -2,5 +2,5 @@
 
 public interface IAttackable
 {
-    void OnAttack(GameObject attacker, Attack attack);
+    void OnAttack(GameObject attacker, int damage);
 }

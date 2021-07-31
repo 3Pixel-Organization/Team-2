@@ -9,10 +9,8 @@ public class ItemPickup : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player")){
-            InventoryManager.Instance.AddItemToTemp(item, out bool picked);
-            if(picked){
-                Destroy(gameObject);
-            }
+            InventoryManager.Instance.AddItemToTemp(item);
+            Destroy(gameObject);
         }
     }
 }

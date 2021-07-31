@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System;
+using System.Linq;
 
 public class SaveManager : MonoBehaviour
 {
@@ -86,15 +87,13 @@ public class SaveManager : MonoBehaviour
 public class PlayerData
 {
     [Header("Player")]
-    public int level;
-    public int maxShield;
-    public int maxHealth;
-    public int maxExp;
-    public int currentExp;
+    public string playerName;
+    public int playerLevel;
+    public int playerXP;
     public int currentCredit;
-    public int baseArmor;
-    public float criticalChance;
-    public int baseDamage;
+
+    [Header("Player Stats")]
+    public Dictionary<TypeOfAttributes, int> playerAttributes = new Dictionary<TypeOfAttributes, int>();
 
     [Header("Inventory")]
     public List<string> inventoryItems = new List<string>();
@@ -105,6 +104,45 @@ public class PlayerData
     public SkillData meleeSkill = new SkillData();
     public SkillData gunSkill = new SkillData();
     public SkillData bodySkill = new SkillData();
+
+    /// <summary>
+    /// Make sure the data in player data is not null or the index is insufficient
+    /// </summary>
+    public void SyncPlayerData()
+    {
+        if (playerLevel <= 0) playerLevel = 1;
+
+        //sync player stats
+        List<TypeOfAttributes> attributes = ((TypeOfAttributes[])Enum.GetValues(typeof(TypeOfAttributes))).ToList();
+        if (playerAttributes == null || playerAttributes.Count <= 0)
+        {
+            playerAttributes = new Dictionary<TypeOfAttributes, int>();
+        }
+        foreach (var item in attributes)
+        {
+            if(playerAttributes.ContainsKey(item) == false)
+            {
+                playerAttributes.Add(item, 0);
+            }
+        }
+        foreach (var item in playerAttributes.Keys)
+        {
+            if(attributes.Contains(item) == false)
+            {
+                playerAttributes.Remove(item);
+            }
+        }
+
+        //sync inventory
+        if(inventoryItems == null || inventoryItems.Count <= 0)
+        {
+            inventoryItems = new List<string>();
+        }
+        if (equipmentItems == null || equipmentItems.Count <= 0)
+        {
+            equipmentItems = new List<string>();
+        }
+    }
 }
 
 [System.Serializable]

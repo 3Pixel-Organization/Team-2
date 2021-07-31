@@ -6,13 +6,13 @@ using TMPro;
 
 public class UIInventoryDesc : MonoBehaviour
 {
+    //this script is in popup panel for inventory items description in home scene 
+    //this script handle all ui function for inventory ui description
+
     public TextMeshProUGUI titleText;
     public Image iconImage;
-    public TextMeshProUGUI maxAmmoText;
-    public TextMeshProUGUI reloadTimeText;
-    public TextMeshProUGUI shotPerSecText;
-    public TextMeshProUGUI magazineSizeText;
-    public TextMeshProUGUI damageText;
+    public Transform statParent;
+    public GameObject statPrefab;
     public Button equipButton, unequipButton;
 
     public void OpenUnequipDesc(Item_SO _item){
@@ -43,11 +43,15 @@ public class UIInventoryDesc : MonoBehaviour
 
         titleText.text = _item.itemName;
         iconImage.sprite = _item.itemSprite;
-        maxAmmoText.text = _item.maxAmmo.ToString();
-        reloadTimeText.text = _item.reloadTime.ToString();
-        shotPerSecText.text = _item.shotsPerSec.ToString();
-        magazineSizeText.text = _item.magazineSize.ToString();
-        damageText.text = _item.weaponDamage.ToString();
+
+        for (int i = statParent.childCount-1; i >= 0; i--)
+        {
+            DestroyImmediate(statParent.GetChild(i).gameObject);
+        }
+        foreach (var item in _item.GetStats())
+        {
+            Instantiate(statPrefab, statParent).GetComponent<UIItemStat>().InitValue(item.Key, item.Value);
+        }
     }
 
     //called in close button

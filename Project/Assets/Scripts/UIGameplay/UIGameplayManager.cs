@@ -15,13 +15,16 @@ public class UIGameplayManager : MonoBehaviour
     public SkillButton skillGunButton;
     public SkillButton skillBodyButton;
 
-    [Header("Health Bar")]
-    public Slider healthBar;
-    public TextMeshProUGUI healthBarText;
-
-    [Header("Exp Bar")]
+    [Header("Player Stat")]
+    public Image playerImage;
     public Slider expBar;
     public TextMeshProUGUI expBarText;
+    public Slider healthBar;
+    public TextMeshProUGUI healthBarText;
+    public Slider shieldBar;
+    public TextMeshProUGUI shieldBarText;
+    public Slider defenseBar;
+    public TextMeshProUGUI defenseBarText;
 
     [Space]
     public TextMeshProUGUI levelText;
@@ -31,6 +34,10 @@ public class UIGameplayManager : MonoBehaviour
     [Header("Wave")]
     public TextMeshProUGUI waitingWaveStartText;
     public TextMeshProUGUI waveState;
+
+    [Space]
+    public GameObject pausePanel;
+    public UITempInventory tempInventory;
 
     private void Awake()
     {
@@ -44,6 +51,9 @@ public class UIGameplayManager : MonoBehaviour
 
     void Start(){
         InitSkillControl();
+        UpdatePlayerStatUI();
+
+        pausePanel.SetActive(false);
     }
 
     void InitSkillControl()
@@ -53,33 +63,57 @@ public class UIGameplayManager : MonoBehaviour
         skillBodyButton.InitSkillButton(SkillManager.Instance.bodySkill);
     }
 
-    public void UpdateHealthSlider(CharacterStats ingamePlayerStats)
+    //button
+    public void Shoot()
     {
-        healthBarText.text = ingamePlayerStats.GetHealth() + " / " + ingamePlayerStats.GetMaxHealth();
-        healthBar.maxValue = ingamePlayerStats.GetMaxHealth();
-        healthBar.value = ingamePlayerStats.GetHealth();
-        //add an if for armor / shield
-        //healthBar.TakingDamage(amount, playerStats.stats);
+        PlayerManager.Instance.Shooting();
     }
 
-    public void UpdateArmorSlider()
+    public void UpdatePlayerStatUI()
     {
+        PlayerStat playerStat = PlayerManager.Instance.playerStat;
+
+        playerImage.sprite = playerStat.playerStat.playerIcon;
+        levelText.text = playerStat.currentLevel.ToString();
+
+        expBarText.text = playerStat.currentExp + " / " + playerStat.MaxExp();
+        expBar.maxValue = playerStat.MaxExp();
+        expBar.value = playerStat.currentExp;
+
+        int maxHealth = (int)PlayerStatManager.Instance.GetTotalAttributeLevel(TypeOfAttributes.HEALTH);
+        healthBarText.text = playerStat.currentHealth + " / " + maxHealth;
+        healthBar.maxValue = maxHealth;
+        healthBar.value = playerStat.currentHealth;
+
+        int maxShield = (int)PlayerStatManager.Instance.GetTotalAttributeLevel(TypeOfAttributes.SHIELD);
+        shieldBarText.text = playerStat.currentShield + " / " +  maxShield;
+        shieldBar.maxValue = maxShield;
+        shieldBar.value = playerStat.currentShield;
+
+        int maxDefense = (int)PlayerStatManager.Instance.GetTotalAttributeLevel(TypeOfAttributes.DEFENCE);
+        defenseBarText.text = playerStat.currentDefense + " / " + maxDefense;
+        defenseBar.maxValue = maxDefense;
+        defenseBar.value = playerStat.currentDefense;
     }
 
-    public void UpdateExpSlider(CharacterStats ingamePlayerStats)
+    public void UpdateAmmoText(PlayerStat playerStat)
     {
-        expBarText.text = ingamePlayerStats.GetActualExp() + " / " + ingamePlayerStats.GetMaxExp();
-        expBar.maxValue = ingamePlayerStats.GetActualExp();
-        expBar.value = ingamePlayerStats.GetMaxExp();
+        int maxAmmo = EquipmentManager.Instance.GetEquipment(EquipmentType.WEAPON).magazineSize;
+        ammoAmountText.text = playerStat.currentAmmo + " / " + maxAmmo;
     }
 
-    public void UpdateLevelText(CharacterStats ingamePlayerStats)
+    //button
+    public void OpenPanelPause()
     {
-        levelText.text = "Level " + ingamePlayerStats.GetLevel().ToString();
+        pausePanel.SetActive(true);
+        tempInventory.InitInventory();
+        Time.timeScale = 0;
     }
 
-    public void UpdateAmmoText(Item_SO weapon)
+    //button
+    public void ClosePanelPause()
     {
-        ammoAmountText.text = weapon.currentAmmo + " / " + weapon.magazineSize + " (" + weapon.ammoAmountInInv + ") ";
+        pausePanel.SetActive(false);
+        Time.timeScale = 1;
     }
 }

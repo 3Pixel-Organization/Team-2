@@ -6,9 +6,14 @@ public class OnDeathGive : MonoBehaviour, IDestructable
 {
     public void OnDestruct(GameObject destroyer)
     {
-        var expToGive = GetComponent<CharacterStats>();
-        var whoToGive = destroyer.GetComponent<CharacterStats>();
-
-        whoToGive.GiveExp(expToGive.GetExpOnDeath());
+        int exp = 0;
+        if (TryGetComponent<EnemyStat>(out EnemyStat enemyStat))
+        {
+            exp = enemyStat.enemyStat.expGivenOnDeath;
+        }
+        if(destroyer.TryGetComponent<PlayerStat>(out PlayerStat playerStat))
+        {
+            playerStat.GiveExp(exp);
+        }
     }
 }

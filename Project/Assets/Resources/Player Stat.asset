@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcc6cffc1212586449b30e004d10051e, type: 3}
+  m_Name: Player Stat
+  m_EditorClassIdentifier: 
+  playerName: player test
+  playerIcon: {fileID: 21300000, guid: 4e12a36058ba47a449348a85f635b844, type: 3}
+  level: 1
+  currentExp: 0
+  maxExp: 100
+  expMaxlvlMultiplier: 1.25
+  health: 100
+  shield: 0
+  defense: 50
+  attackPower: 1
+  criticalChance: 0
+  criticalMultiplier: 0.25
+  speed: 15

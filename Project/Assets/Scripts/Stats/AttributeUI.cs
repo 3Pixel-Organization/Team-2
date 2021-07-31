@@ -1,100 +1,51 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class AttributeUI : MonoBehaviour
 {
 
     public AttributeUI_SO attribute;
+    public Button addButton;
+    public Image attributeImage;
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI valueText;
 
-    private CharacterStats _stats;
-
-    public GameObject attributeAddButton;
-
-    public TextMeshProUGUI title;
-    public TextMeshProUGUI amountOfAttribute;
-    void Start()
+    public void InitBaseAttribute()
     {
-        _stats = PlayerManager.Instance.ingamePlayerStats;
-        title.text = attribute.attributeName;
-    }
-    public void UpdateText()
-    {
-        if (_stats == null)
-        {
-            _stats = PlayerManager.Instance.ingamePlayerStats;
-        }
-        switch (attribute.attributeType)
-        {
-            case TypeOfAttributes.HP:
-                amountOfAttribute.text = _stats.GetMaxHealth().ToString();
-                break;
+        attributeImage.sprite = attribute.attributeIcon;
+        titleText.text = attribute.attributeName;
+        valueText.text = PlayerStatManager.Instance.GetAttributeLevel(attribute.attributeType, out bool maxed).ToString();
 
-            case TypeOfAttributes.SHIELD:
-                amountOfAttribute.text = _stats.GetMaxShield().ToString();
-                break;
-
-            case TypeOfAttributes.DAMAGE:
-                amountOfAttribute.text = _stats.GetDamage().ToString();
-                break;
-
-            case TypeOfAttributes.DEFENCE:
-                amountOfAttribute.text = _stats.GetArmor().ToString();
-                break;
-
-            case TypeOfAttributes.CRITCHANCE:
-                amountOfAttribute.text = _stats.GetCriticalChance().ToString("#.00") + " %"; ;
-                break;
-
-            case TypeOfAttributes.EMPTY:
-                break;
-        }
-
+        if(addButton != null) addButton.interactable = (PlayerStatManager.Instance.GetAttributePoint() > 0);
+        addButton.gameObject.SetActive(!maxed);
     }
 
-    public void IsActive(bool active)
+    public void InitEquipmentAttribute()
     {
-        attributeAddButton.SetActive(active);
+        attributeImage.sprite = attribute.attributeIcon;
+        titleText.text = attribute.attributeName;
+        valueText.text = EquipmentManager.Instance.GetEquipmentStat(attribute.attributeType).ToString();
+
+        addButton.gameObject.SetActive(false);
     }
 
-    public void AddAttribute()
+    public void InitTotalAttribute()
     {
-        if (_stats == null)
-        {
-            _stats = PlayerManager.Instance.ingamePlayerStats;
-        }
-        switch (attribute.attributeType)
-        {
-            case TypeOfAttributes.HP:
-                _stats.stats.maxHealth += (int)attribute.addValue;
-                break;
+        attributeImage.sprite = attribute.attributeIcon;
+        titleText.text = attribute.attributeName;
+        valueText.text = PlayerStatManager.Instance.GetTotalAttributeLevel(attribute.attributeType).ToString();
 
-            case TypeOfAttributes.SHIELD:
-                _stats.stats.maxShield += (int)attribute.addValue;
-                break;
-
-            case TypeOfAttributes.DAMAGE:
-                _stats.stats.baseDamage += (int)attribute.addValue;
-                break;
-
-            case TypeOfAttributes.DEFENCE:
-                _stats.stats.baseArmor += (int)attribute.addValue;
-                break;
-
-            case TypeOfAttributes.CRITCHANCE:
-                _stats.stats.criticalChance += attribute.addValue;
-                break;
-
-            case TypeOfAttributes.EMPTY:
-                break;
-        }
+        addButton.gameObject.SetActive(false);
     }
 
-    public void OnClickAddAttribute()
+    //button
+    public void AddAttributeLevel()
     {
-        if (_stats == null)
+        if(PlayerStatManager.Instance.GetAttributePoint() > 0)
         {
-            _stats = PlayerManager.Instance.ingamePlayerStats;
+            PlayerStatManager.Instance.AddAttributeLevel(attribute.attributeType);
+            MainBaseManager.Instance.stats.RefreshStat();
         }
-        SkillTreeManager.Instance.AddAttribute(this);
     }
 }

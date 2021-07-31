@@ -4,11 +4,21 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    #region Singleton
-
     public static PlayerManager Instance;
 
-    public int maxSlots = 12;
+    public PlayerStat playerStat;
+    public PlayerAnimator playerAnimator;
+    public AttackDefenition baseAttack;
+    public ProjectileManager projectileManager;
+
+    //shooting variables
+    private bool readyToShoot = true;
+
+    public bool isWeaponRaycast;
+
+    public MissionInventory missionInventory;
+
+    UIGameplayManager uiGameplay => UIGameplayManager.Instance;
 
     private void Awake()
     {
@@ -20,207 +30,52 @@ public class PlayerManager : MonoBehaviour
         Instance = this;
     }
 
-    #endregion Singleton
-
-    #region Events
-
-    public event EventHandler OnLevelChanged;
-
-    public event EventHandler OnExpChanged;
-
-    #endregion Events
-
-    #region Initializations
-
-    [Header("Level and Stats")]
-    public CharacterStats ingamePlayerStats;
-
-    public PlayerAnimator playerAnimator;
-
-    public AttackDefenition baseAttack;
-
-    public ProjectileManager projectileManager;
-
-    public Item_SO weapon;
-
-    //shooting variables
-    private bool readyToShoot = true;
-
-    private bool reloading = false;
-    public bool isWeaponRaycast;
-
-    public MissionInventory missionInventory;
-
-    #endregion Initializations
-
-    UIGameplayManager uiGameplay => UIGameplayManager.Instance;
-
-    #region Start and Update
-
     private void Start()
     {
-
-        ingamePlayerStats = GetComponent<CharacterStats>();
+        playerStat = GetComponent<PlayerStat>();
         projectileManager = GetComponent<ProjectileManager>();
 
-        //Initialize the two events with their method
-        OnLevelChanged += OnLevelChange;
-        OnExpChanged += OnExpChange;
-
         //updates all the UI
-        UpdateAmmoText();
-        RefreshStats();
-        UpdateLevelText();
-        //missionInventory.ResetBag();
-        //SkillTreeManager.Instance.UpdateAvailablePoints();
+        uiGameplay?.UpdateAmmoText(playerStat);
+        playerStat.InitCharacterStat();
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            TakeDamage(10);
-            UpdateHealthSlider();
-        }
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //    playerStat.TakeDamage(10);
+        //    uiGameplay?.UpdatePlayerStatUI();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.L)) //Debug purposes, can be removed at any time
-        {
-            GiveExp(40);
-            Debug.Log($"Actual level:{ingamePlayerStats.GetLevel()} \n Actual Exp:{ingamePlayerStats.GetActualExp()}   Actual Max EXP:{ingamePlayerStats.GetMaxExp()}");
-            //Remember to delete the Debug.log in the OnLevelChange() method when you are not longer going to use this debug tool.
-        }
+        //if (Input.GetKeyDown(KeyCode.L)) //Debug purposes, can be removed at any time
+        //{
+        //    playerStat.GiveExp(40);
+        //    uiGameplay?.UpdatePlayerStatUI();
+        //}
 
-        //I dont have Smaprthone so I am shooting with mouse click
-        if (Input.GetMouseButtonDown(0))
-            projectileManager.ShootWeapon(isWeaponRaycast);
+        ////I dont have Smaprthone so I am shooting with mouse click
+        //if (Input.GetMouseButtonDown(0))
+        //    projectileManager.ShootWeapon(isWeaponRaycast);
     }
-
-    #endregion Start and Update
-
-    #region Animations
 
     public void ShootingAnimation()
     {
         playerAnimator.Shooting();
     }
 
-    #endregion Animations
-
-    #region Pickup via Collision
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<ItemPickup>())
+        if (other.gameObject.TryGetComponent(out ItemPickup itemPickup))
         {
-            var item = other.GetComponent<ItemPickup>();
-            if (item)
-            {
-                //missionInventory.AddItem(item.item, 1);
-                Destroy(other.gameObject);
-            }
+            //missionInventory.AddItem(item.item, 1);
+            Destroy(other.gameObject);
         }
     }
-
-    #endregion Pickup via Collision
-
-    #region UI Updates
-
-    public void UpdateHealthSlider()
-    {
-        uiGameplay?.UpdateHealthSlider(ingamePlayerStats);
-    }
-
-    public void UpdateArmorSlider()
-    {
-    }
-
-    public void UpdateExpSlider()
-    {
-        uiGameplay?.UpdateExpSlider(ingamePlayerStats);
-    }
-
-    public void UpdateLevelText()
-    {
-        uiGameplay?.UpdateLevelText(ingamePlayerStats);
-    }
-
-    public void UpdateAmmoText()
-    {
-        uiGameplay?.UpdateAmmoText(weapon);
-    }
-
-    public void UpdateStatusBarText(TextMeshProUGUI barText, string min, string max)
-    {
-        barText.text = min + " / " + max;
-    }
-
-    #endregion UI Updates
-
-    #region Stats Updates
-
-    public void RefreshStats()
-    {
-        ingamePlayerStats.stats.currentDamage = ingamePlayerStats.stats.baseDamage;
-        ingamePlayerStats.stats.currentArmor = ingamePlayerStats.stats.baseArmor;
-        UpdateArmorSlider();
-        UpdateExpSlider();
-        UpdateHealthSlider();
-    }
-
-    #endregion 
-
-    #region Increasers
-
-    public void GiveHealth(int amount)
-    {
-        ingamePlayerStats.GiveHealth(amount);
-    }
-
-    public void GiveShield(int amount)
-    {
-        ingamePlayerStats.GiveShield(amount);
-    }
-
-    public void GiveCredit(int amount)
-    {
-        ingamePlayerStats.GiveCredit(amount);
-    }
-
-    public void GiveExp(int amount)
-    {
-        ingamePlayerStats.GiveExp(amount);
-    }
-
-    #endregion 
-
-    #region Decreasers
-
-    public void TakeDamage(int amount)
-    {
-        ingamePlayerStats.TakeDamage(amount);
-        if (ingamePlayerStats.GetHealth() <= 0)
-        {
-            Debug.Log("Player Died");
-
-            GameManager.Instance.DeathEventCall();
-        }
-
-        UpdateHealthSlider();
-    }
-
-    public void TakeCredit(int amount)
-    {
-        ingamePlayerStats.TakeCredit(amount);
-        //update inventory event
-    }
-
-    #endregion Decreasers
-
-    #region Attacking
 
     public void OnProjectileCollided(GameObject target)
     {
-        var attack = baseAttack.CreateAttack(ingamePlayerStats, target.GetComponent<CharacterStats>());
+        var attack = baseAttack.CalculateDamage(playerStat);
 
         var attackable = target.GetComponentsInChildren<IAttackable>();
 
@@ -232,35 +87,21 @@ public class PlayerManager : MonoBehaviour
 
     public void Shooting()
     {
-        if (readyToShoot == false || reloading == true)
+        if (readyToShoot == false)
         {
             return;
         }
 
         readyToShoot = false;
-        if (weapon.currentAmmo > 0)
+        if (playerStat.currentAmmo > 0)
         {
-            weapon.currentAmmo--;
-            if (weapon.ammoAmountInInv > 0)
-            {
-                weapon.ammoAmountInInv--;
-            }
+            playerStat.currentAmmo--;
 
             projectileManager.ShootWeapon(isWeaponRaycast);
             AudioManager.Instance.Play("Shoot");
 
-            UpdateAmmoText();
-            Invoke("ResetShot", weapon.shotsPerSec);
-        }
-        else if (weapon.currentAmmo == 0 && weapon.ammoAmountInInv != 0)
-        {
-            Invoke("Reload", 0f);
-        }
-        else if (weapon.currentAmmo == 0 && weapon.ammoAmountInInv == 0)
-        {
-            Debug.Log("[Player Manager] There is not enough ammo in the inventory");
-            ResetShot();
-            return;
+            uiGameplay?.UpdateAmmoText(playerStat);
+            Invoke(nameof(ResetShot), playerStat.attackInterval);
         }
         else
         {
@@ -275,78 +116,23 @@ public class PlayerManager : MonoBehaviour
         readyToShoot = true;
     }
 
-    private void Reload()
+    public void AddHealth(int amount, out bool success)
     {
-        reloading = true;
-        AudioManager.Instance.Play("Reload");
-        Invoke("ReloadFinished", weapon.reloadTime);
+        playerStat.GiveHealth(amount, out success);
+        uiGameplay?.UpdatePlayerStatUI();
     }
 
-    private void ReloadFinished()
+    public void AddShield(int amount, out bool success)
     {
-        //if there is not enough ammo in the inventory, only load the amount u have
-        if (weapon.ammoAmountInInv < weapon.magazineSize)
-        {
-            weapon.currentAmmo = weapon.ammoAmountInInv;
-            weapon.ammoAmountInInv -= weapon.currentAmmo;
-            UpdateAmmoText();
-            reloading = false;
-            ResetShot();
-            return;
-        }
+        playerStat.GiveShield(amount, out success);
+        uiGameplay?.UpdatePlayerStatUI();
+    }
 
-        //reset magazine and remove the ammo from the inventory
-        weapon.currentAmmo = weapon.magazineSize;
-        weapon.ammoAmountInInv -= weapon.magazineSize;
-        UpdateAmmoText();
-        reloading = false;
+    public void AddAmmo(int amount)
+    {
+        AudioManager.Instance.Play("Reload");
+        playerStat.AddAmmo(amount);
+        uiGameplay?.UpdateAmmoText(playerStat);
         ResetShot();
     }
-
-    #endregion Attacking
-
-    #region Event Calls
-
-    public void LevelUpEventCall()
-    {
-        OnLevelChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void ExpChangeEventCall()
-    {
-        OnExpChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    #endregion Event Calls
-
-    #region Leveling Up and EXP
-
-    private void OnLevelChange(object sender, EventArgs e) //Method called onlevelchanged event
-    {
-        //Visual effects or things that happen on the event of leveling up
-        ingamePlayerStats.LevelUpStatsChange();
-        UpdateExpSlider();
-        UpdateLevelText();
-        RefreshStats();
-        //SkillTreeManager.Instance.AddSkillPoints(3);
-        Debug.Log($"LEVEL UP! \n New Stats:  MAXHEALTH = {ingamePlayerStats.stats.maxHealth} MAXSHIELD = {ingamePlayerStats.stats.maxShield} BASEARMOR = {ingamePlayerStats.stats.baseArmor}  "); //Debug purposes, can be removed at any time
-    }
-
-    private void OnExpChange(object sender, EventArgs e) //Method called onexpchanged event
-    {
-        //Visual effects or things that happen on the event of getting exp
-        UpdateExpSlider();
-    }
-
-    #endregion Leveling Up and EXP
-
-    #region Save
-
-    public void SaveStats()
-    {
-        ingamePlayerStats.SaveStats();
-    }
-
-    #endregion Save
-        
 }

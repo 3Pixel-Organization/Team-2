@@ -2000,10 +2000,10 @@ MonoBehaviour:
     prefab: {fileID: 4343845956413101915, guid: 5969d5c6f20ba614baaa752a084309c8,
       type: 3}
   - enemyDiff: 1
-    prefab: {fileID: 4343845956413101915, guid: 5969d5c6f20ba614baaa752a084309c8,
+    prefab: {fileID: 4343845956413101915, guid: 29e469e15424ff64d84a9b46abcd5c1d,
       type: 3}
   - enemyDiff: 2
-    prefab: {fileID: 4343845956413101915, guid: 5969d5c6f20ba614baaa752a084309c8,
+    prefab: {fileID: 4343845956413101915, guid: f6052eef664e6934ebf630fa031e031d,
       type: 3}
 --- !u!1001 &223064457
 PrefabInstance:

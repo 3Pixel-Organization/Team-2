@@ -6,6 +6,9 @@ using TMPro;
 
 public class UIBaseInventory : MonoBehaviour
 {
+    //this script is in InventoryUI in home scene 
+    //this script handle all ui function for inventory ui in home scene
+
     public UIInventoryDesc inventoryDesc;
 
     [Header("Inventory")]
@@ -16,7 +19,7 @@ public class UIBaseInventory : MonoBehaviour
     public UIEquipment[] equipmentSlots;
 
     [Header("Stats")]
-    public TextMeshProUGUI lifeText;
+    public List<AttributeUI> weaponAttributes = new List<AttributeUI>();
 
     public void InitInventory(){
         inventoryDesc.gameObject.SetActive(false);
@@ -62,7 +65,10 @@ public class UIBaseInventory : MonoBehaviour
     }
 
     void Stats(){
-
+        foreach (var item in weaponAttributes)
+        {
+            item.InitEquipmentAttribute();
+        }
     }
 
     /// <summary>

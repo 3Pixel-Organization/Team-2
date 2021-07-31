@@ -10,18 +10,14 @@ public class BasicTakingDamage : MonoBehaviour, IAttackable
         stats = GetComponent<CharacterStats>();
     }
 
-    public void OnAttack(GameObject attacker, Attack attack)
+    public void OnAttack(GameObject attacker, int damage)
     {
-        if (gameObject.GetComponent<PlayerManager>())
+        if(TryGetComponent(out CharacterStats characterStats))
         {
-            gameObject.GetComponent<PlayerManager>().TakeDamage(attack.Damage);
-        }
-        else if (gameObject.GetComponent<EnemyController>())
-        {
-            gameObject.GetComponent<EnemyController>().TakeDamage(attack.Damage);
+            characterStats.TakeDamage(damage);
         }
 
-        if (stats.GetHealth() <= 0)
+        if (stats.currentHealth <= 0)
         {
             var destructibles = GetComponents<IDestructable>();
             foreach (IDestructable d in destructibles)

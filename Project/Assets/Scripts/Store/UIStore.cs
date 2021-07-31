@@ -15,11 +15,8 @@ public class UIStore : MonoBehaviour
     public GameObject descPanel;
     public TextMeshProUGUI titleText;
     public Image iconImage;
-    public TextMeshProUGUI maxAmmoText;
-    public TextMeshProUGUI reloadTimeText;
-    public TextMeshProUGUI shotPerSecText;
-    public TextMeshProUGUI magazineSizeText;
-    public TextMeshProUGUI damageText;
+    public Transform statParent;
+    public GameObject statPrefab;
     public TextMeshProUGUI sellCostText;
     public TextMeshProUGUI buyCostText;
     public Button sellButton, buyButton;
@@ -94,11 +91,15 @@ public class UIStore : MonoBehaviour
 
         titleText.text = _item.itemName;
         iconImage.sprite = _item.itemSprite;
-        maxAmmoText.text = _item.maxAmmo.ToString();
-        reloadTimeText.text = _item.reloadTime.ToString();
-        shotPerSecText.text = _item.shotsPerSec.ToString();
-        magazineSizeText.text = _item.magazineSize.ToString();
-        damageText.text = _item.weaponDamage.ToString();
+
+        for (int i = statParent.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(statParent.GetChild(i).gameObject);
+        }
+        foreach (var item in _item.GetStats())
+        {
+            Instantiate(statPrefab, statParent).GetComponent<UIItemStat>().InitValue(item.Key, item.Value);
+        }
     }
 
     //called in close button
@@ -108,9 +109,9 @@ public class UIStore : MonoBehaviour
 
     //button
     public void BuyItem(Item_SO _item){
-        if(GameManager.Instance.playerStats.currentCredit >= _item.buyCost){
+        if(SaveManager.Instance.playerData.currentCredit >= _item.buyCost){
             Debug.Log("cek buy item " + _item.itemName);
-            GameManager.Instance.playerStats.TakeCredit(_item.buyCost);
+            SaveManager.Instance.playerData.currentCredit -= _item.buyCost;
             InventoryManager.Instance.AddItemToInventory(_item);
             InitStore();
         }
@@ -118,9 +119,9 @@ public class UIStore : MonoBehaviour
 
     //button
     public void SellItem(Item_SO _item){
-        if(GameManager.Instance.playerStats.currentCredit >= _item.sellCost){
+        if(SaveManager.Instance.playerData.currentCredit >= _item.sellCost){
             Debug.Log("cek sell item " + _item.itemName);
-            GameManager.Instance.playerStats.GiveCredit(_item.sellCost);
+            SaveManager.Instance.playerData.currentCredit -= _item.sellCost;
             InventoryManager.Instance.RemoveItemFromInventory(_item);
             InitStore();
         }

@@ -10,20 +10,22 @@ public class DestroyedScrollingText : MonoBehaviour, IDestructable
     Vector3 offset = Vector3.zero;
     public void OnDestruct(GameObject destroyer)
     {
-        var stats = GetComponent<CharacterStats>();
-        var text = "+ " + stats.GetExpOnDeath().ToString() + " EXP";
-        var random = Random.Range(1, 10);
-        if(random >= 6)
+        if(TryGetComponent(out EnemyStat enemyStat))
         {
-            offset.x = 1;
+            var text = "+ " + enemyStat.enemyStat.expGivenOnDeath.ToString() + " EXP";
+            var random = Random.Range(1, 10);
+            if (random >= 6)
+            {
+                offset.x = 1;
+            }
+            else
+            {
+                offset.x = -1;
+            }
+            var position = destroyer.transform.position + offset;
+            var scrollingText = Instantiate(Text, position, Quaternion.identity);
+            scrollingText.SetText(text);
+            scrollingText.SetColor(textColor);
         }
-        else
-        {
-            offset.x = -1;
-        }
-        var position = destroyer.transform.position + offset;
-        var scrollingText = Instantiate(Text, position, Quaternion.identity);
-        scrollingText.SetText(text);
-        scrollingText.SetColor(textColor);
     }
 }

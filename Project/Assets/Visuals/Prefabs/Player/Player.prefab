@@ -663,7 +663,7 @@ GameObject:
   - component: {fileID: 9034490475034499573}
   - component: {fileID: 8677077845011682373}
   - component: {fileID: 8677077845011682370}
-  - component: {fileID: 1724891631}
+  - component: {fileID: -2761840811324653823}
   - component: {fileID: 1794017324}
   - component: {fileID: 1283330145}
   - component: {fileID: 1283330146}
@@ -774,20 +774,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b2926090f35ae94c855bd8f3d52eff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSlots: 12
-  healthBar: {fileID: 0}
-  healthBarText: {fileID: 0}
-  expBar: {fileID: 0}
-  expBarText: {fileID: 0}
-  ingamePlayerStats: {fileID: 0}
-  levelText: {fileID: 0}
+  playerStat: {fileID: 0}
   playerAnimator: {fileID: 8677077845011682370}
-  attackButton: {fileID: 0}
   baseAttack: {fileID: 11400000, guid: c30c87e4f70c5ed4a8064c4122e07129, type: 2}
   projectileManager: {fileID: 0}
   weapon: {fileID: 11400000, guid: 055b387f9c083864982feacb3bd3be24, type: 2}
-  ammoAmountText: {fileID: 0}
   isWeaponRaycast: 1
+  currentAmmo: 0
   missionInventory: {fileID: 0}
 --- !u!114 &8677077845011682373
 MonoBehaviour:
@@ -802,8 +795,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 0}
-  joystick: {fileID: 0}
-  touchField: {fileID: 0}
   touchPlayerRotation: 0.2
   speed: 0.4
   rotationSpeed: 8
@@ -824,7 +815,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 0}
   animator: {fileID: 0}
---- !u!114 &1724891631
+--- !u!114 &-2761840811324653823
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -833,12 +824,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 8677077844600963176}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4ed1c3328142d54ab81b0efc2eda4d9, type: 3}
+  m_Script: {fileID: 11500000, guid: 61b8858a2fc03e44fa05cfc44681cd77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats_Template: {fileID: 11400000, guid: 2e5c53cf9b869d04e9964267ec0baad9, type: 2}
-  stats: {fileID: 0}
-  isPlayer: 1
+  currentHealth: 0
+  currentShield: 0
+  currentDefense: 0
+  currentAttackPower: 0
+  critChance: 0
+  playerStat: {fileID: 11400000, guid: f5f49822b33bad048a0005ef239e0574, type: 2}
+  currentLevel: 0
+  currentExp: 0
+  currentCredit: 0
 --- !u!114 &1794017324
 MonoBehaviour:
   m_ObjectHideFlags: 0

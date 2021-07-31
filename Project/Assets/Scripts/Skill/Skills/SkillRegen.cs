@@ -10,7 +10,9 @@ public class SkillRegen : Skill
     {
         base.ActivateSkill();
 
-        PlayerManager.Instance.GiveHealth(regenAmount);
+        Debug.Log("active skill regen skill");
+
+        PlayerManager.Instance.AddHealth(regenAmount, out _);
 
         DeactivateSkill();
     }

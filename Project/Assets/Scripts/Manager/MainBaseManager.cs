@@ -9,7 +9,7 @@ public class MainBaseManager : MonoBehaviour
     public UIBaseInventory inventory;
     public UIBaseSkill skill;
     public UIStore store;
-    public GameObject stats;
+    public UIBaseStat stats;
     public GameObject mission;
 
 
@@ -28,6 +28,7 @@ public class MainBaseManager : MonoBehaviour
         inventory.InitInventory();
         store.gameObject.SetActive(false);
         skill.gameObject.SetActive(false);
+        stats.gameObject.SetActive(false);
     }
 
     //open store
@@ -67,6 +68,7 @@ public class MainBaseManager : MonoBehaviour
     public void StatToggle(bool value){
         if(value){
             stats.gameObject.SetActive(true);
+            stats.InitStat();
         }else
         {
             stats.gameObject.SetActive(false);

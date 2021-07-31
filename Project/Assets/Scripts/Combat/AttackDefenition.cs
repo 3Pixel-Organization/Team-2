@@ -5,54 +5,36 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="Attack.asset", menuName ="Attack/New Attack")]
 public class AttackDefenition : ScriptableObject
 {
-    public float coolDown = 1;
-
-    public float range;
-
-    public float criticalMultiplier = 2;
-    public float criticalChance = 1;
-
-    public Attack CreateAttack (CharacterStats attacker, CharacterStats defender)
+    public int CalculateDamage (CharacterStats attacker)
     {
-        float baseDamage = attacker.GetDamage();
-        float critChance = criticalChance + attacker.GetCriticalChance();
+        int damage = attacker.currentAttackPower;
 
-        bool isCritical = Random.value < critChance;
+        bool isCritical = Random.value < attacker.critChance;
         if (isCritical)
         {
-            baseDamage = baseDamage * criticalMultiplier;
-        }
-        if(defender != null)
-        {
-            float defenderArmor = defender.GetArmor();
-            if(defenderArmor >= baseDamage)
-            {
-                baseDamage = 1;
-            }
-            else
-            {
-                baseDamage -= defenderArmor;
-            }
+            damage += (int)(damage * attacker.critMultiplier);
         }
 
-        return new Attack((int)baseDamage, isCritical);
+        return damage;
     }
 
-    public int ExecuteAttack(GameObject attacker, GameObject target)
+    public void ExecuteAttack(GameObject attacker, GameObject target)
     {
         if (target == null)
-            return 0;
+            return;
+
+        CharacterStats characterStats = attacker.GetComponent<CharacterStats>();
 
         // check if target is in range of player
-        if (Vector3.Distance(attacker.transform.position, target.transform.position) > range)
-            return 0;
+        if (Vector3.Distance(attacker.transform.position, target.transform.position) > characterStats.attackRange)
+            return;
 
         // check if target is in front of the player
         if (!attacker.transform.IsFacingTarget(target.transform))
-            return 0;
+            return;
 
         // at this point the attack will connect
-        var attack = CreateAttack(attacker.GetComponent<CharacterStats>(), target.GetComponent<CharacterStats>());
+        var attack = CalculateDamage(characterStats);
 
         var attackables = target.GetComponents<IAttackable>();
 
@@ -60,7 +42,5 @@ public class AttackDefenition : ScriptableObject
         {
             ((IAttackable)a).OnAttack(attacker.gameObject, attack);
         }
-
-        return attack.Damage;
     }
 }

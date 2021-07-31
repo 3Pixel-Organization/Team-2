@@ -31,13 +31,13 @@ public class ProjectileManager : MonoBehaviour
     {
         if (fieldOFView.getClosestEnemy() && coolDownTimer<=0)
         {
-           if (Vector3.Distance(transform.position, fieldOFView.getClosestEnemy().position) < playerManager.baseAttack.range)
+           if (Vector3.Distance(transform.position, fieldOFView.getClosestEnemy().position) < playerManager.playerStat.attackRange)
             {
                 if (isRaycast)
                     ShootRaycastBullet();
                 else if (!isRaycast)
                     ShootProjectileBullet();
-                coolDownTimer= playerManager.baseAttack.coolDown;
+                coolDownTimer= playerManager.playerStat.attackInterval;
             }
         }
     }
