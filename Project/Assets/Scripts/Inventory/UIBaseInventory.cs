@@ -14,6 +14,7 @@ public class UIBaseInventory : MonoBehaviour
     [Header("Inventory")]
     public Transform inventoryParent;
     public GameObject inventoryPrefab;
+    public GameObject[] inventorySlots;
 
     [Header("Equipment")]
     public UIEquipment[] equipmentSlots;
@@ -22,15 +23,35 @@ public class UIBaseInventory : MonoBehaviour
     public List<AttributeUI> weaponAttributes = new List<AttributeUI>();
 
     public void InitInventory(){
-        inventoryDesc.gameObject.SetActive(false);
+        if(inventoryDesc != null)
+        {
+            inventoryDesc.gameObject.SetActive(false);
+        }
 
         Inventory();
         Equipment();
         Stats();
     }
 
-    void Inventory(){
+    void Inventory()
+    {
         //clear parent
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            UIItem uiItem = inventorySlots[i].GetComponentInChildren<UIItem>();
+            if (InventoryManager.Instance.currentItems[i] != null)
+            {
+                var item = InventoryManager.Instance.currentItems[i];
+                uiItem.InitInventoryItem(InventoryManager.Instance.items[item]);
+            }
+            else
+            {
+                uiItem.InitInventoryItem(null);
+            }
+        }
+
+        /*
         for (int i = inventoryParent.childCount-1; i >= 0; i--)
         {
             DestroyImmediate(inventoryParent.GetChild(i).gameObject);
@@ -45,7 +66,7 @@ public class UIBaseInventory : MonoBehaviour
         {
             UIItem uiItem = Instantiate(inventoryPrefab, inventoryParent).GetComponent<UIItem>();
             uiItem.InitInventoryItem(null);
-        }
+        }*/
     }
 
     void Equipment(){

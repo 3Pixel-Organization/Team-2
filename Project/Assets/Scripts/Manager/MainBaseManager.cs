@@ -6,82 +6,99 @@ using UnityEngine.UI;
 public class MainBaseManager : MonoBehaviour
 {
     public static MainBaseManager Instance;
+    public GameObject inventoryUI;
+    public GameObject skillUI;
+    public GameObject storeUI;
+    public GameObject statsUI;
+    public GameObject baseMenuUI;
+    public GameObject missionUI;
+
+    [Header("Inscript getters")]
     public UIBaseInventory inventory;
     public UIBaseSkill skill;
     public UIStore store;
     public UIBaseStat stats;
-    public GameObject mission;
-
 
     private void Awake()
     {
         if (Instance != null)
         {
-            Debug.Log("[InventoryManager] There is more then one inventory Instance");
+            Debug.Log("[MainBaseManager] There is more then one Main Base Instance");
             return;
         }
         Instance = this;
+
+        inventory = inventoryUI.GetComponent<UIBaseInventory>();
+        store = storeUI.GetComponent<UIStore>();
+        skill = skillUI.GetComponent<UIBaseSkill>();
+        stats = statsUI.GetComponent<UIBaseStat>();
     }
 
-    void Start(){
-        inventory.gameObject.SetActive(true);
-        inventory.InitInventory();
-        store.gameObject.SetActive(false);
-        skill.gameObject.SetActive(false);
-        stats.gameObject.SetActive(false);
+    void Start()
+    {
+        Toggle(baseMenuUI);
+        //inventory.InitInventory();
     }
 
-    //open store
-    public void StoreToggle(bool value){
-        if(value){
-            store.gameObject.SetActive(true);
-            store.InitStore();
-        }else
+    //sets all other menu UI elemets to false and executes specific UI initializing methods
+    public void Toggle(GameObject obj)
+    {
+        if (obj == baseMenuUI)
         {
-            store.gameObject.SetActive(false);
+            inventoryUI.gameObject.SetActive(false);
+            storeUI.gameObject.SetActive(false);
+            skillUI.gameObject.SetActive(false);
+            statsUI.gameObject.SetActive(false);
+            baseMenuUI.gameObject.SetActive(true);
+            return;
         }
-    }
 
-    //open inventory
-    public void InventoryToggle(bool value){
-        if(value){
-            inventory.gameObject.SetActive(true);
-            inventory.InitInventory();
-        }else
+        if (obj.gameObject.activeSelf)
         {
-            inventory.gameObject.SetActive(false);
+            inventoryUI.gameObject.SetActive(false);
+            storeUI.gameObject.SetActive(false);
+            skillUI.gameObject.SetActive(false);
+            statsUI.gameObject.SetActive(false);
+            baseMenuUI.gameObject.SetActive(true);
         }
-    }
-
-    //open skills
-    public void SkillToggle(bool value){
-        if(value){
-            skill.gameObject.SetActive(true);
-            skill.InitSkillPanel();
-        }else
+        else
         {
-            skill.gameObject.SetActive(false);
-        }
-    }
+            inventoryUI.gameObject.SetActive(false);
+            storeUI.gameObject.SetActive(false);
+            skillUI.gameObject.SetActive(false);
+            statsUI.gameObject.SetActive(false);
+            baseMenuUI.gameObject.SetActive(false);
 
-    //open stats
-    public void StatToggle(bool value){
-        if(value){
-            stats.gameObject.SetActive(true);
-            stats.InitStat();
-        }else
-        {
-            stats.gameObject.SetActive(false);
+            obj.gameObject.SetActive(true);
+
+            if (obj == inventoryUI)
+            {
+                //inventory.InitInventory();
+            }
+            else if (obj == skillUI)
+            {
+                //skill.InitSkillPanel();
+            }
+            else if (obj == statsUI)
+            {
+                //stats.InitStat();
+            }
+            else if (obj == storeUI)
+            {
+                //store.InitStore();
+            }
         }
     }
 
     //open mission
     public void MissionToggle(bool value){
         if(value){
-            mission.gameObject.SetActive(true);
+            baseMenuUI.gameObject.SetActive(false);
+            missionUI.gameObject.SetActive(true);
         }else
         {
-            mission.gameObject.SetActive(false);
+            missionUI.gameObject.SetActive(false);
+            baseMenuUI.gameObject.SetActive(true);
         }
     }
 
