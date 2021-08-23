@@ -11,7 +11,11 @@ public class MainBaseManager : MonoBehaviour
     public GameObject storeUI;
     public GameObject statsUI;
     public GameObject baseMenuUI;
+    public GameObject playUI;
+    public GameObject levelUI;
     public GameObject missionUI;
+
+
 
     [Header("Inscript getters")]
     public UIBaseInventory inventory;
@@ -49,6 +53,8 @@ public class MainBaseManager : MonoBehaviour
             storeUI.gameObject.SetActive(false);
             skillUI.gameObject.SetActive(false);
             statsUI.gameObject.SetActive(false);
+            playUI.gameObject.SetActive(false);
+            levelUI.gameObject.SetActive(false);
             baseMenuUI.gameObject.SetActive(true);
             return;
         }
@@ -59,6 +65,8 @@ public class MainBaseManager : MonoBehaviour
             storeUI.gameObject.SetActive(false);
             skillUI.gameObject.SetActive(false);
             statsUI.gameObject.SetActive(false);
+            playUI.gameObject.SetActive(false);
+            levelUI.gameObject.SetActive(false);
             baseMenuUI.gameObject.SetActive(true);
         }
         else
@@ -68,6 +76,8 @@ public class MainBaseManager : MonoBehaviour
             skillUI.gameObject.SetActive(false);
             statsUI.gameObject.SetActive(false);
             baseMenuUI.gameObject.SetActive(false);
+            playUI.gameObject.SetActive(false);
+            levelUI.gameObject.SetActive(false);
 
             obj.gameObject.SetActive(true);
 
@@ -87,10 +97,22 @@ public class MainBaseManager : MonoBehaviour
             {
                 //store.InitStore();
             }
+            else if (obj == playUI)
+
+            {
+                //displays the "choose level UI"
+            }
+            else if (obj == levelUI)
+
+            {
+                //display level info and the start button
+                //needs to do the re-writing of the level info based on level SO (needs to be created).
+
+            }
         }
     }
 
-    //open mission
+    //open mission when pressing the start button - requires a level SO
     public void MissionToggle(bool value){
         if(value){
             baseMenuUI.gameObject.SetActive(false);

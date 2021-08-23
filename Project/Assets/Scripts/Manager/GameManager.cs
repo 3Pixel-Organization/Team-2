@@ -6,13 +6,22 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using JetBrains.Annotations;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { private set; get; }
 
+    [Header("Required Components")]
+    [TextArea]
+    public string required;
+
     public GameObject loadingPanel;
-    public Slider loadingBar; 
+    public Slider loadingBar;
+
+ 
+
+
 
     public enum GameState { GamePause, GameWon, GameLost};
     public event EventHandler OnPlayerDeathEvent;
@@ -32,6 +41,8 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        required = "SoundManager, ";
     }
 
     void Start()
