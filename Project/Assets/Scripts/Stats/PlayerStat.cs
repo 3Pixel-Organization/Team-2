@@ -136,19 +136,20 @@ public class PlayerStat : CharacterStats
         UIGameplayManager.Instance.UpdatePlayerStatUI();
     }
 
-    public void AddAmmo(int size)
+    public void AddAmmo()
     {
         int maxAmmo = EquipmentManager.Instance.GetEquipment(EquipmentType.WEAPON).magazineSize;
-        if (currentAmmo >= maxAmmo)
+        currentAmmo = maxAmmo;
+        /*if (currentAmmo >= maxAmmo)
         {
             Debug.Log("Ammo is full");
             return;
         }
 
-        currentAmmo += size;
-        if (currentAmmo > maxAmmo)
+        //currentAmmo += size; meant for ammo pickup - currently not available
+        if (currentAmmo < maxAmmo)
         {
             currentAmmo = maxAmmo;
-        }
+        }*/
     }
 }

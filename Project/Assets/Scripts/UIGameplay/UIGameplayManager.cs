@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using JetBrains.Annotations;
 
 public class UIGameplayManager : MonoBehaviour
 {
@@ -31,6 +32,12 @@ public class UIGameplayManager : MonoBehaviour
     public Button attackButton;
     public TextMeshProUGUI ammoAmountText;
 
+    public Slider reloadSlider;
+    public bool reloading;
+    float reloadTime;
+    float gameTime;
+
+
     [Header("Wave")]
     public TextMeshProUGUI waitingWaveStartText;
     public TextMeshProUGUI waveState;
@@ -49,11 +56,22 @@ public class UIGameplayManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start(){
+    void Start()
+    {
         InitSkillControl();
         UpdatePlayerStatUI();
 
         pausePanel.SetActive(false);
+
+
+        reloading = false;
+    }
+    private void Update()
+    {
+        if (reloading)
+        {
+            ReloadSlider(reloadTime, Time.time);
+        }
     }
 
     void InitSkillControl()
@@ -67,6 +85,11 @@ public class UIGameplayManager : MonoBehaviour
     public void Shoot()
     {
         PlayerManager.Instance.Shooting();
+    }
+
+    public void Reload()
+    {
+        PlayerManager.Instance.ReloadWithTimer();
     }
 
     public void UpdatePlayerStatUI()
@@ -100,6 +123,31 @@ public class UIGameplayManager : MonoBehaviour
     {
         int maxAmmo = EquipmentManager.Instance.GetEquipment(EquipmentType.WEAPON).magazineSize;
         ammoAmountText.text = playerStat.currentAmmo + " / " + maxAmmo;
+    }
+    public void ReloadSlider(float timer, float currentTime)
+    {
+        if (reloading == true)
+        {
+            float time = currentTime - gameTime;
+            if (time < reloadTime)
+            {
+                reloadSlider.value = time;
+            }
+            else
+            {
+                reloading = false;
+                reloadSlider.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            reloading = true;
+            gameTime = currentTime;
+            reloadSlider.gameObject.SetActive(true);
+            reloadSlider.maxValue = timer;
+            reloadSlider.value = timer;
+            reloadTime = timer;
+        }
     }
 
     //button

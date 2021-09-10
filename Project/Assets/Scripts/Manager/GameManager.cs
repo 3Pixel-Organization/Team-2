@@ -53,7 +53,16 @@ public class GameManager : MonoBehaviour
         OnLevelLostEvent += OnLevelLostManager;
         OnLevelWonEvent += OnLevelWonManager;
 
-        SaveManager.Instance.playerData.SyncPlayerData();
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.playerData.SyncPlayerData();
+        }
+        else
+        {
+            gameObject.AddComponent<SaveManager>();
+            SaveManager.Instance.playerData.SyncPlayerData();
+        }
+
     }
 
     private void Update()
@@ -61,7 +70,11 @@ public class GameManager : MonoBehaviour
         #region Scene Sound
 
         Scene currentScene = SceneManager.GetActiveScene();
-        PlaySceneSound(currentScene.name);
+        if (AudioManager.Instance != null) {
+            PlaySceneSound(currentScene.name); 
+        }
+
+        
 
         #endregion
     }

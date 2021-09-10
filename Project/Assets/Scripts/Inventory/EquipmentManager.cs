@@ -34,16 +34,21 @@ public class EquipmentManager : MonoBehaviour
     /// </summary>
     void SyncData(){
         //remove item from player data if no match id from item list
+        if (equipmentItems.Count <= 0)
+        {
+            EquipItem(defaultWeapon);
+            return;
+        }
         for (int i = equipmentItems.Count-1; i >= 0; i--)
         {
             if(InventoryManager.Instance.items.ContainsKey(equipmentItems[i]) == false){
                 equipmentItems.RemoveAt(i);
             }
-        }
+        }/*
         if(equipmentItems.Count <= 0)
         {
             EquipItem(defaultWeapon);
-        }
+        }*/
     }
 
     /// <summary>
@@ -94,10 +99,14 @@ public class EquipmentManager : MonoBehaviour
     public float GetEquipmentStat(TypeOfAttributes typeOfAttributes)
     {
         float sum = 0;
-        foreach (var item in equipmentItems)
+        if(equipmentItems.Count > 0)
         {
-            sum += InventoryManager.Instance.items[item].GetItemAttribute(typeOfAttributes);
+            foreach (var item in equipmentItems)
+            {
+                sum += InventoryManager.Instance.items[item].GetItemAttribute(typeOfAttributes);
+            }
         }
+
         return sum;
     }
 }

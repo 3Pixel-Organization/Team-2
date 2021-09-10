@@ -25,8 +25,9 @@ public class EnemyAnimationController : MonoBehaviour
         animator.SetTrigger("Dying");
     }
 
-    public void EnemyMovement()
+    public void EnemyMovement(float velocity)
     {
-        animator.SetFloat("Speed", enemyController.agent.velocity.magnitude / enemyController.agent.speed);
+        animator.SetFloat("Speed", Mathf.Abs(velocity));
+        //animator.SetFloat("Speed", enemyController.agent.velocity.magnitude / enemyController.agent.speed);
     }
 }

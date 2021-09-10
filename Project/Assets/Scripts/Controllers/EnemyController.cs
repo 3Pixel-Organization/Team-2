@@ -46,30 +46,34 @@ public class EnemyController : MonoBehaviour, IPooledObject
         if (agent.enabled)
         {
             _distanceFromPlayer = Vector3.Distance(transform.position, player.transform.position);
+            float timeSinceLastAttack = Time.time - _timeOfLastAttack;
+            //bool attackOnCoolDown = timeSinceLastAttack < enemyStats.attackInterval;
+            bool inRange = _distanceFromPlayer < enemyStats.attackRange;
+            //agent.isStopped = attackOnCoolDown;
 
-            if (_distanceFromPlayer <= enemyStats.aggroDistance)
+            if (!inRange)
             {
                 agent.SetDestination(player.transform.position);
-                animationController.EnemyMovement();
+                Vector3 velocity = agent.velocity.normalized;
+                float magnitude;
+                if (velocity != Vector3.zero)
+                    magnitude = 1;
+                else magnitude = 0;
+                animationController.EnemyMovement(magnitude);
             }
-            else if (_distanceFromPlayer > enemyStats.aggroDistance * 1.5)
+            else
             {
-                agent.SetDestination(transform.position);
-                animationController.EnemyMovement();
+                bool attackOnCoolDown = timeSinceLastAttack < enemyStats.attackInterval;
+                if (!attackOnCoolDown)
+                {
+                    agent.isStopped = true;
+                    agent.velocity = Vector3.zero;
+                    animationController.EnemyAttackAnimation();
+                    transform.LookAt(player.transform);
+                    _timeOfLastAttack = Time.time;
+                }
             }
 
-            float timeSinceLastAttack = Time.time - _timeOfLastAttack;
-            bool attackOnCoolDown = timeSinceLastAttack < enemyStats.attackInterval;
-            bool attackInRange = _distanceFromPlayer < enemyStats.attackRange;
-            agent.isStopped = attackOnCoolDown;
-            if (!attackOnCoolDown && attackInRange)
-            {
-                agent.velocity = Vector3.zero;
-
-                animationController.EnemyAttackAnimation();
-                transform.LookAt(player.transform);
-                _timeOfLastAttack = Time.time;
-            }
         }
     }
 
@@ -79,6 +83,7 @@ public class EnemyController : MonoBehaviour, IPooledObject
     public void Hit()
     {
         attack.ExecuteAttack(gameObject, player);
+
     }
 
     //called on DestroyObject script

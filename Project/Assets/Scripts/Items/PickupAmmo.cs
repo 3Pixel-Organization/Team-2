@@ -10,7 +10,7 @@ public class PickupAmmo : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            PlayerManager.Instance.AddAmmo(size);
+            PlayerManager.Instance.Reload();
 
             Destroy(gameObject);
         }

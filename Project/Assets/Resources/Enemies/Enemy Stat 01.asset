@@ -20,6 +20,6 @@ MonoBehaviour:
   attack: 5
   speed: 10
   attackRange: 2
-  attackInterval: 1
+  attackInterval: 2
   criticalChance: 0.25
   criticalMultiplier: 0.25

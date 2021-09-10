@@ -4,6 +4,8 @@ public class ProjectileManager : MonoBehaviour
 {
     public Transform pfBullet;
 
+    public LineRenderer bulletTrailRaycast;
+
     public Transform gunEndPosition;
 
     public Transform shootPosition;
@@ -29,21 +31,21 @@ public class ProjectileManager : MonoBehaviour
     }
     public void ShootWeapon(bool isRaycast)
     {
-        if (fieldOFView.getClosestEnemy() && coolDownTimer<=0)
+
+        if (coolDownTimer<=0)
         {
-           if (Vector3.Distance(transform.position, fieldOFView.getClosestEnemy().position) < playerManager.playerStat.attackRange)
-            {
-                if (isRaycast)
-                    ShootRaycastBullet();
-                else if (!isRaycast)
-                    ShootProjectileBullet();
-                coolDownTimer= playerManager.playerStat.attackInterval;
-            }
+            //if (Vector3.Distance(transform.position, fieldOFView.getClosestEnemy().position) < playerManager.playerStat.attackRange)
+            if (isRaycast)
+                ShootRaycastBullet();
+            else if (!isRaycast)
+                ShootProjectileBullet();
+            coolDownTimer = playerManager.playerStat.attackInterval;
         }
     }
 
     public void ShootProjectileBullet()
     {
+        
         Transform bullet = Instantiate(pfBullet, gunEndPosition.position, Quaternion.identity);
         MuzzleFlashAnimation();
         shootDir = gunEndPosition.forward;
@@ -56,20 +58,32 @@ public class ProjectileManager : MonoBehaviour
     {
         shootDir = gunEndPosition.forward;
         RaycastHit raycastHit;
-        if (Physics.Raycast(gunEndPosition.transform.position, shootDir, out raycastHit, 100f))
+        if (Physics.Raycast(gunEndPosition.transform.position, shootDir, out raycastHit, playerManager.playerStat.attackRange))
         {
             if (raycastHit.transform.gameObject.GetComponent<IAttackable>() != null)
             {
                 playerManager.OnProjectileCollided(raycastHit.transform.gameObject);
                 CreateWeaponTracer(gunEndPosition.transform.position, fieldOFView.getClosestEnemy().position);
-                MuzzleFlashAnimation();
             }
+            else
+            {
+                CreateWeaponTracer(gunEndPosition.transform.position, raycastHit.point);
+            }
+
+            MuzzleFlashAnimation();
+            PlayerManager.Instance.ShootingAnimation();
         }
     }
 
     private void CreateWeaponTracer(Vector3 startPos, Vector3 targetPos)
     {
-        // Vector3 dir=( targetPos-startPos).normalized;
+        GameObject bulletTrailEffect = Instantiate(bulletTrailRaycast.gameObject, startPos, Quaternion.identity);
+        LineRenderer lineR = bulletTrailEffect.GetComponent<LineRenderer>();
+
+        lineR.SetPosition(0, startPos);
+        lineR.SetPosition(1, targetPos);
+
+        Destroy(bulletTrailEffect, 0.1f);
     }
 
     public void MuzzleFlashAnimation()

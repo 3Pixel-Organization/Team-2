@@ -10,7 +10,7 @@ public class EnemyStat : CharacterStats
 
     public override void InitCharacterStat()
     {
-        if (enemyStat == null) Debug.LogError("enemystat is null");
+        if (enemyStat == null) Debug.LogError("enemy stat is null");
 
         currentHealth = enemyStat.health;
         currentAttackPower = enemyStat.attack;

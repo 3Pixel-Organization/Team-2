@@ -19,7 +19,7 @@ MonoBehaviour:
   health: 50
   attack: 10
   speed: 14
-  attackRange: 2
-  attackInterval: 1
+  attackRange: 3
+  attackInterval: 3
   criticalChance: 0.5
   criticalMultiplier: 0.25

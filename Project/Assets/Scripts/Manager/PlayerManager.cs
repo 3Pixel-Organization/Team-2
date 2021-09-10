@@ -12,7 +12,7 @@ public class PlayerManager : MonoBehaviour
     public ProjectileManager projectileManager;
 
     //shooting variables
-    private bool readyToShoot = true;
+    public bool readyToShoot = true;
 
     public bool isWeaponRaycast;
 
@@ -105,8 +105,7 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[Player Manager] You dont have enought ammo!");
-            ResetShot();
+            ReloadWithTimer();
             return;
         }
     }
@@ -128,11 +127,19 @@ public class PlayerManager : MonoBehaviour
         uiGameplay?.UpdatePlayerStatUI();
     }
 
-    public void AddAmmo(int amount)
+    public void Reload()
     {
-        AudioManager.Instance.Play("Reload");
-        playerStat.AddAmmo(amount);
+        playerStat.AddAmmo();
         uiGameplay?.UpdateAmmoText(playerStat);
+        Debug.Log("[Player Manager] Reloaded");
         ResetShot();
+    }
+
+    public void ReloadWithTimer()
+    {
+        readyToShoot = false;
+        AudioManager.Instance.Play("Reload");
+        UIGameplayManager.Instance.ReloadSlider(2f, Time.time);
+        Invoke(nameof(Reload), 2f);
     }
 }
